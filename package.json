@@ -1,0 +1,15 @@
+{
+  "name": "standx-future-trading-agent",
+  "version": "1.0.0",
+  "description": "AI-assisted StandX perpetual futures trading agent with JWT auth, body signing, and risk gates.",
+  "main": "dist/agent-run.js",
+  "license": "MIT",
+  "keywords": ["standx", "perps", "futures", "ai-agent", "typescript", "dusd"],
+  "scripts": {
+    "agent": "tsx src/agent-run.ts",
+    "build": "tsc",
+    "typecheck": "tsc --noEmit",
+    "check": "npm run typecheck"
+  },
+  "engines": { "node": ">=20" }
+}
