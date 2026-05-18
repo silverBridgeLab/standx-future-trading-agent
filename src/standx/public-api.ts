@@ -1,6 +1,7 @@
 import { STANDX_PERPS_BASE } from "../constants";
 import { httpJson } from "../http/client";
 import type { Kline, Ticker } from "../types";
+import { klineBarSeconds, toKlineResolution } from "./kline-resolution";
 
 interface MarketOverviewSymbol {
   symbol: string;
@@ -19,13 +20,14 @@ interface SymbolMarket {
   volume_quote_24h: string;
 }
 
-interface KlineRow {
-  time: string;
-  open: string;
-  high: string;
-  low: string;
-  close: string;
-  volume: string;
+interface KlineHistoryResponse {
+  s: string;
+  t: number[];
+  o: number[];
+  h: number[];
+  l: number[];
+  c: number[];
+  v: number[];
 }
 
 export async function fetchMarketOverview(): Promise<MarketOverviewSymbol[]> {
@@ -49,14 +51,24 @@ export async function fetchSymbolMarket(symbol: string): Promise<Ticker> {
 }
 
 export async function fetchKlines(symbol: string, interval: string, limit: number): Promise<Kline[]> {
-  const q = `symbol=${encodeURIComponent(symbol)}&interval=${interval}&limit=${limit}`;
-  const rows = await httpJson<KlineRow[]>(`${STANDX_PERPS_BASE}/api/query_kline?${q}`);
-  return rows.map((r) => ({
-    time: new Date(r.time).getTime(),
-    open: +r.open,
-    high: +r.high,
-    low: +r.low,
-    close: +r.close,
-    volume: +r.volume,
+  const resolution = toKlineResolution(interval);
+  const to = Math.floor(Date.now() / 1000);
+  const from = to - klineBarSeconds(resolution) * limit;
+  const q = new URLSearchParams({
+    symbol,
+    from: String(from),
+    to: String(to),
+    resolution,
+    countback: String(limit),
+  });
+  const d = await httpJson<KlineHistoryResponse>(`${STANDX_PERPS_BASE}/api/kline/history?${q}`);
+  if (d.s !== "ok" || !d.t?.length) return [];
+  return d.t.map((time, i) => ({
+    time: time * 1000,
+    open: d.o[i],
+    high: d.h[i],
+    low: d.l[i],
+    close: d.c[i],
+    volume: d.v[i],
   }));
 }

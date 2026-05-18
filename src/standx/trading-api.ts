@@ -37,12 +37,16 @@ export async function newOrder(req: OrderRequest): Promise<OrderResult> {
   return { id: d.request_id, status: "submitted", requestId: d.request_id };
 }
 
+interface OpenOrdersPage {
+  result: { id: number }[];
+}
+
 export async function cancelOpenOrders(symbol: string): Promise<void> {
-  const open = await standxRequest<{ result: { id: number }[] }>({
+  const open = await standxRequest<OpenOrdersPage>({
     method: "GET",
     path: `/api/query_open_orders?symbol=${encodeURIComponent(symbol)}`,
   });
-  const list = Array.isArray(open) ? open : (open as { result?: { id: number }[] }).result ?? [];
+  const list = open.result ?? [];
   if (!list.length) return;
   await standxRequest({
     method: "POST",
