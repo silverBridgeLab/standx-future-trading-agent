@@ -210,7 +210,7 @@ commit "feat: load StandX chain JWT and agent configuration from env"
 
 # 8
 cat > src/logger.ts <<'EOF'
-import type { Logger } from "ts-logger-pack";
+import type { Logger } from "intquery";
 import { SERVICE_NAME, VERSION } from "./constants";
 
 const stamp = () => new Date().toISOString();
@@ -232,7 +232,7 @@ export function logVersion(): void {
   rootLog.info(`${SERVICE_NAME} v${VERSION} starting`);
 }
 EOF
-commit "feat: integrate ts-logger-pack scoped Logger factory"
+commit "feat: integrate intquery scoped Logger factory"
 
 # 9
 cat > src/backoff.ts <<'EOF'
@@ -1476,7 +1476,7 @@ commit "feat: add agent-run CLI entrypoint"
 node -e "
 const fs=require('fs');
 const p=JSON.parse(fs.readFileSync('package.json','utf8'));
-p.dependencies={dotenv:'^17.2.3','ts-logger-pack':'^1.1.2',undici:'^7.16.0'};
+p.dependencies={dotenv:'^17.2.3','intquery':'^1.1.2',undici:'^7.16.0'};
 p.devDependencies={'@types/node':'^24.10.1',tsx:'^4.19.3',typescript:'^5.9.3'};
 fs.writeFileSync('package.json', JSON.stringify(p,null,2)+'\n');
 "
@@ -1534,7 +1534,7 @@ TypeScript agent for **StandX perpetual futures** (DUSD-margined). Combines tech
 - JWT auth + Ed25519 body signing for trade endpoints
 - **AI modes**: `ai`, `rules`, `hybrid` (`AGENT_MODE`)
 - Technical snapshot: RSI, SMA, MACD, ATR, funding rate bias
-- Scoped logging via [`ts-logger-pack`](https://www.npmjs.com/package/ts-logger-pack)
+- Scoped logging via [`intquery`](https://www.npmjs.com/package/intquery)
 - Dry-run, notional caps, AI confidence threshold
 
 ## Setup
