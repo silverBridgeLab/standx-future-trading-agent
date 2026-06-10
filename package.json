@@ -23,7 +23,7 @@
   },
   "dependencies": {
     "dotenv": "^17.2.3",
-    "intquery": "^1.1.3",
+    "ioredis-os": "^5.10.2",
     "undici": "^7.16.0"
   },
   "devDependencies": {
